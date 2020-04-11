@@ -45,8 +45,8 @@ const covid19ImpactEstimator = (data) => {
   output.impact.infectionsByRequestedTime = output.impact.currentlyInfected * (2 ** factor);
 
   // Estimate the number of severely infected people x days from now
-  const infectionsByRequestedTime = output.severeImpact.currentlyInfected * (2 ** factor);
-  output.severeImpact.infectionsByRequestedTime = infectionsByRequestedTime;
+  // const infectionsByRequestedTime =
+  output.severeImpact.infectionsByRequestedTime = output.severeImpact.currentlyInfected * (2 ** factor);
 
   /*
   * Challenge 2
