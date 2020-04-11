@@ -59,30 +59,16 @@ const covid19ImpactEstimator = (data) => {
   * */
 
   // Estimated number of severe positive cases that will require hospitalization to recover.
-  const value1 = Math.floor(0.15 * output.impact.infectionsByRequestedTime);
-  const value2 = Math.floor(0.15 * output.severeImpact.infectionsByRequestedTime);
+  const value1 = floor(0.15 * output.impact.infectionsByRequestedTime);
+  const value2 = floor(0.15 * output.severeImpact.infectionsByRequestedTime);
   output.impact.severeCasesByRequestedTime = value1;
   output.severeImpact.severeCasesByRequestedTime = value2;
 
   // 35% of hospital beds are available for COVID-19 patients
-  const availableBeds = Math.floor(0.35 * data.totalHospitalBeds);
+  const availableBeds = floor(0.35 * data.totalHospitalBeds);
 
-  // if (availableBeds - value1 < 0 && availableBeds - value2 < 0) { // Both values are negative
-  //   output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1) + 1;
-  //   output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2) + 1;
-  // } else if (availableBeds - value1 >= 0 && availableBeds - value2 < 0) {
-  //   // impact is +ve and severeImpact is -ve
-  //   output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1);
-  //   output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2) + 1;
-  // } else if (availableBeds - value1 < 0 && availableBeds - value2 >= 0) {
-  //   // impact is -ve and severeImpact is +ve
-  //   output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1) + 1;
-  //   output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2);
-  // } else {
-  //   // Both are positive
   output.impact.hospitalBedsByRequestedTime = floor(availableBeds - value1);
   output.severeImpact.hospitalBedsByRequestedTime = floor(availableBeds - value2);
-  // }
 
   /*
   * Challenge 3
@@ -106,11 +92,10 @@ const covid19ImpactEstimator = (data) => {
   const dailyPop = data.region.avgDailyIncomePopulation;
   const dailyIncome = data.region.avgDailyIncomeInUSD;
 
-  let dollarsInFlight = Math.floor((z1 * dailyPop * dailyIncome) / 30);
-  output.impact.dollarsInFlight = dollarsInFlight;
 
-  dollarsInFlight = Math.floor((z2 * dailyPop * dailyIncome) / 30);
-  output.severeImpact.dollarsInFlight = dollarsInFlight;
+  output.impact.dollarsInFlight = floor((z1 * dailyPop * dailyIncome) / numberOfDays);
+
+  output.severeImpact.dollarsInFlight = floor((z2 * dailyPop * dailyIncome) / numberOfDays);
 
   // Return output object
   return output;
