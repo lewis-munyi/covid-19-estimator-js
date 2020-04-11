@@ -53,23 +53,34 @@ const covid19ImpactEstimator = (data) => {
   * */
 
   // Estimated number of severe positive cases that will require hospitalization to recover.
-  let value1 = 0.15 * output.impact.infectionsByRequestedTime;
-  let value2 = 0.15 * output.severeImpact.infectionsByRequestedTime;
-  output.impact.severeCasesByRequestedTime = Math.floor(value1);
-  output.severeImpact.severeCasesByRequestedTime = Math.floor(value2);
-
-  const severeCasesByRequestedTime = output.impact.infectionsByRequestedTime;
-  const impactSevereCasesByRequestedTime = output.severeImpact.infectionsByRequestedTime;
+  let value1 = Math.floor(0.15 * output.impact.infectionsByRequestedTime);
+  let value2 = Math.floor(0.15 * output.severeImpact.infectionsByRequestedTime);
+  output.impact.severeCasesByRequestedTime = value1;
+  output.severeImpact.severeCasesByRequestedTime = value2;
 
   // 35% of hospital beds are available for COVID-19 patients
-  const availableBeds1 = Math.floor(0.35 * data.totalHospitalBeds);
-  const availableBeds2 = Math.floor(0.35 * data.totalHospitalBeds);
+  const availableBeds = 0.35 * data.totalHospitalBeds;
 
-  // Calculate the total number of available beds for impact & severe impact
-  value1 = availableBeds1 - severeCasesByRequestedTime;
-  value2 = availableBeds2 - impactSevereCasesByRequestedTime;
-  output.impact.hospitalBedsByRequestedTime = value1;
-  output.severeImpact.hospitalBedsByRequestedTime = value2;
+  if (availableBeds - value1 < 1) {
+    output.impact.hospitalBedsByRequestedTime = availableBeds - value1 + 1;
+  } else if (availableBeds - value2 < 1) {
+    output.severeImpact.hospitalBedsByRequestedTime = availableBeds - value2 + 1;
+  } else {
+    output.impact.hospitalBedsByRequestedTime = availableBeds - value1;
+    output.severeImpact.hospitalBedsByRequestedTime = availableBeds - value2;
+  }
+
+
+  // const infectionsByRequestedTime1 = output.impact.infectionsByRequestedTime;
+  // const infectionsByRequestedTime2 = output.severeImpact.infectionsByRequestedTime;
+  //
+  //
+  //
+  // // Calculate the total number of available beds for impact & severe impact
+  // value1 = availableBeds - infectionsByRequestedTime1;
+  // value2 = availableBeds - infectionsByRequestedTime2;
+  // output.impact.hospitalBedsByRequestedTime = Math.floor(value1);
+  // output.severeImpact.hospitalBedsByRequestedTime = Math.floor(value2);
 
   /*
   * Challenge 3
