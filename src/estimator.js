@@ -47,6 +47,25 @@ const covid19ImpactEstimator = (data) => {
   // Estimate the number of severely infected people x days from now
   output.severeImpact.infectionsByRequestedTime = output.severeImpact.currentlyInfected * (2 ** factor);
 
+  /*
+  * Challenge 2
+  * */
+
+  // Estimated number of severe positive cases that will require hospitalization to recover.
+  output.impact.severeCasesByRequestedTime = 0.15 * output.impact.infectionsByRequestedTime;
+  output.severeImpact.severeCasesByRequestedTime = 0.15 * output.severeImpact.infectionsByRequestedTime;
+
+  const severeCasesByRequestedTime = output.impact.infectionsByRequestedTime;
+  const impactSevereCasesByRequestedTime = output.severeImpact.infectionsByRequestedTime;
+
+  // 35% of hospital beds are available for COVID-19 patients
+  const availableBeds = Math.floor(0.35 * data.totalHospitalBeds);
+
+  // Calculate the total number of available beds for impact & severe impact
+  output.impact.hospitalBedsByRequestedTime = availableBeds - severeCasesByRequestedTime;
+  output.severeImpact.hospitalBedsByRequestedTime = availableBeds - impactSevereCasesByRequestedTime;
+
+
   // Return output object
   return output;
 };
