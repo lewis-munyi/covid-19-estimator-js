@@ -17,26 +17,28 @@ const calculateDays = (period, numberOfDays) => {
 };
 
 const covid19ImpactEstimator = (data) => {
+  const input = data;
+
   /*
   * Challenge 1
   * */
 
   // Output
   const output = {
-    data, // the input data you got
+    data: input, // the input data you got
     impact: {}, // your best case estimation
     severeImpact: {} // your severe case estimation
   };
 
 
   // Derive currently infected people
-  output.impact.currentlyInfected = Math.floor(data.reportedCases * 10);
+  output.impact.currentlyInfected = Math.floor(input.reportedCases * 10);
 
   // Derive currently infected people for the severely infected
-  output.severeImpact.currentlyInfected = Math.floor(data.reportedCases * 50);
+  output.severeImpact.currentlyInfected = Math.floor(input.reportedCases * 50);
 
   // Calculate Number of days
-  const numberOfDays = calculateDays(data.periodType, data.timeToElapse);
+  const numberOfDays = calculateDays(input.periodType, input.timeToElapse);
 
   // Calculate Multiplication Factor
   const factor = Math.floor(numberOfDays / 3);
@@ -61,7 +63,7 @@ const covid19ImpactEstimator = (data) => {
   const impactSevereCasesByRequestedTime = output.severeImpact.infectionsByRequestedTime;
 
   // 35% of hospital beds are available for COVID-19 patients
-  const availableBeds = Math.floor(0.35 * data.totalHospitalBeds);
+  const availableBeds = Math.floor(0.35 * input.totalHospitalBeds);
 
   // Calculate the total number of available beds for impact & severe impact
   value = availableBeds - impactSevereCasesByRequestedTime;
@@ -85,8 +87,8 @@ const covid19ImpactEstimator = (data) => {
   // Estimate how much money the economy is likely to lose daily, over the said period of time.
   const infectionsByTime = output.impact.infectionsByRequestedTime;
   const severeInfectionsByTime = output.severeImpact.infectionsByRequestedTime;
-  const dailyPop = data.region.avgDailyIncomePopulation;
-  const dailyIncome = data.region.avgDailyIncomeInUSD;
+  const dailyPop = input.region.avgDailyIncomePopulation;
+  const dailyIncome = input.region.avgDailyIncomeInUSD;
 
   let dollarsInFlight = Math.floor((infectionsByTime * dailyPop * dailyIncome) / 30);
   output.impact.dollarsInFlight = dollarsInFlight;
@@ -94,9 +96,9 @@ const covid19ImpactEstimator = (data) => {
   dollarsInFlight = Math.floor((severeInfectionsByTime * dailyPop * dailyIncome) / 30);
   output.severeImpact.dollarsInFlight = dollarsInFlight;
 
+  data = output;
   // Return output object
-  return output;
+  return data;
 };
-
 
 export default covid19ImpactEstimator;
