@@ -16,6 +16,12 @@ const calculateDays = (period, numberOfDays) => {
   }
 };
 
+const floor = (value) => {
+  if (value < 0) {
+    return Math.floor(value) + 1;
+  }
+  return Math.floor(value);
+};
 const covid19ImpactEstimator = (data) => {
   /*
   * Challenge 1
@@ -53,66 +59,57 @@ const covid19ImpactEstimator = (data) => {
   * */
 
   // Estimated number of severe positive cases that will require hospitalization to recover.
-  let value1 = Math.floor(0.15 * output.impact.infectionsByRequestedTime);
-  let value2 = Math.floor(0.15 * output.severeImpact.infectionsByRequestedTime);
+  const value1 = Math.floor(0.15 * output.impact.infectionsByRequestedTime);
+  const value2 = Math.floor(0.15 * output.severeImpact.infectionsByRequestedTime);
   output.impact.severeCasesByRequestedTime = value1;
   output.severeImpact.severeCasesByRequestedTime = value2;
 
   // 35% of hospital beds are available for COVID-19 patients
-  const availableBeds = 0.35 * data.totalHospitalBeds;
+  const availableBeds = Math.floor(0.35 * data.totalHospitalBeds);
 
-  if (availableBeds - value1 < 0 && availableBeds - value2 < 0) {
-    output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1) + 1;
-    output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2) + 1;
-  } else if (availableBeds - value1 >= 0 && availableBeds - value2 < 0) {
-    output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1);
-    output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2) + 1;
-  } else if (availableBeds - value1 < 0 && availableBeds - value2 >= 0) {
-    output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1) + 1;
-    output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2);
-  } else {
-    output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1);
-    output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2);
-  }
-
-
-  // const infectionsByRequestedTime1 = output.impact.infectionsByRequestedTime;
-  // const infectionsByRequestedTime2 = output.severeImpact.infectionsByRequestedTime;
-  //
-  //
-  //
-  // // Calculate the total number of available beds for impact & severe impact
-  // value1 = availableBeds - infectionsByRequestedTime1;
-  // value2 = availableBeds - infectionsByRequestedTime2;
-  // output.impact.hospitalBedsByRequestedTime = Math.floor(value1);
-  // output.severeImpact.hospitalBedsByRequestedTime = Math.floor(value2);
+  // if (availableBeds - value1 < 0 && availableBeds - value2 < 0) { // Both values are negative
+  //   output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1) + 1;
+  //   output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2) + 1;
+  // } else if (availableBeds - value1 >= 0 && availableBeds - value2 < 0) {
+  //   // impact is +ve and severeImpact is -ve
+  //   output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1);
+  //   output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2) + 1;
+  // } else if (availableBeds - value1 < 0 && availableBeds - value2 >= 0) {
+  //   // impact is -ve and severeImpact is +ve
+  //   output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1) + 1;
+  //   output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2);
+  // } else {
+  //   // Both are positive
+  output.impact.hospitalBedsByRequestedTime = floor(availableBeds - value1);
+  output.severeImpact.hospitalBedsByRequestedTime = floor(availableBeds - value2);
+  // }
 
   /*
   * Challenge 3
   * */
 
   // Estimated number of severe positive cases that will require ICU care.
-  value2 = 0.05 * output.severeImpact.infectionsByRequestedTime;
-  value1 = 0.05 * output.impact.infectionsByRequestedTime;
-  output.impact.casesForICUByRequestedTime = value1;
-  output.severeImpact.casesForICUByRequestedTime = value2;
+  const x1 = 0.05 * output.impact.infectionsByRequestedTime;
+  const x2 = 0.05 * output.severeImpact.infectionsByRequestedTime;
+  output.impact.casesForICUByRequestedTime = x1;
+  output.severeImpact.casesForICUByRequestedTime = x2;
 
   // Estimated number of severe positive cases that will require ventilators.
-  value1 = 0.02 * output.impact.infectionsByRequestedTime;
-  output.impact.casesForVentilatorsByRequestedTime = Math.floor(value1);
-  value2 = 0.02 * output.severeImpact.infectionsByRequestedTime;
-  output.severeImpact.casesForVentilatorsByRequestedTime = Math.floor(value2);
+  const y1 = 0.02 * output.impact.infectionsByRequestedTime;
+  const y2 = 0.02 * output.severeImpact.infectionsByRequestedTime;
+  output.impact.casesForVentilatorsByRequestedTime = floor(y1);
+  output.severeImpact.casesForVentilatorsByRequestedTime = floor(y2);
 
   // Estimate how much money the economy is likely to lose daily, over the said period of time.
-  const infectionsByTime = output.impact.infectionsByRequestedTime;
-  const severeInfectionsByTime = output.severeImpact.infectionsByRequestedTime;
+  const z1 = output.impact.infectionsByRequestedTime;
+  const z2 = output.severeImpact.infectionsByRequestedTime;
   const dailyPop = data.region.avgDailyIncomePopulation;
   const dailyIncome = data.region.avgDailyIncomeInUSD;
 
-  let dollarsInFlight = Math.floor((infectionsByTime * dailyPop * dailyIncome) / 30);
+  let dollarsInFlight = Math.floor((z1 * dailyPop * dailyIncome) / 30);
   output.impact.dollarsInFlight = dollarsInFlight;
 
-  dollarsInFlight = Math.floor((severeInfectionsByTime * dailyPop * dailyIncome) / 30);
+  dollarsInFlight = Math.floor((z2 * dailyPop * dailyIncome) / 30);
   output.severeImpact.dollarsInFlight = dollarsInFlight;
 
   // Return output object
