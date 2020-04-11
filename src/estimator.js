@@ -16,12 +16,6 @@ const calculateDays = (period, numberOfDays) => {
   }
 };
 
-const floor = (value) => {
-  if (value < 0) {
-    return Math.floor(value) + 1;
-  }
-  return Math.floor(value);
-};
 const covid19ImpactEstimator = (data) => {
   /*
   * Challenge 1
@@ -36,16 +30,16 @@ const covid19ImpactEstimator = (data) => {
 
 
   // Derive currently infected people
-  output.impact.currentlyInfected = Math.floor(data.reportedCases * 10);
+  output.impact.currentlyInfected = Math.trunc(data.reportedCases * 10);
 
   // Derive currently infected people for the severely infected
-  output.severeImpact.currentlyInfected = Math.floor(data.reportedCases * 50);
+  output.severeImpact.currentlyInfected = Math.trunc(data.reportedCases * 50);
 
   // Calculate Number of days
   const numberOfDays = calculateDays(data.periodType, data.timeToElapse);
 
   // Calculate Multiplication Factor
-  const factor = Math.floor(numberOfDays / 3);
+  const factor = Math.trunc(numberOfDays / 3);
 
   // Estimate the number of infected people x days from now
   output.impact.infectionsByRequestedTime = output.impact.currentlyInfected * (2 ** factor);
@@ -59,16 +53,16 @@ const covid19ImpactEstimator = (data) => {
   * */
 
   // Estimated number of severe positive cases that will require hospitalization to recover.
-  const value1 = floor(0.15 * output.impact.infectionsByRequestedTime);
-  const value2 = floor(0.15 * output.severeImpact.infectionsByRequestedTime);
+  const value1 = Math.trunc(0.15 * output.impact.infectionsByRequestedTime);
+  const value2 = Math.trunc(0.15 * output.severeImpact.infectionsByRequestedTime);
   output.impact.severeCasesByRequestedTime = value1;
   output.severeImpact.severeCasesByRequestedTime = value2;
 
   // 35% of hospital beds are available for COVID-19 patients
-  const availableBeds = floor(0.35 * data.totalHospitalBeds);
+  const availableBeds = Math.trunc(0.35 * data.totalHospitalBeds);
 
-  output.impact.hospitalBedsByRequestedTime = floor(availableBeds - value1);
-  output.severeImpact.hospitalBedsByRequestedTime = floor(availableBeds - value2);
+  output.impact.hospitalBedsByRequestedTime = Math.trunc(availableBeds - value1);
+  output.severeImpact.hospitalBedsByRequestedTime = Math.trunc(availableBeds - value2);
 
   /*
   * Challenge 3
@@ -83,8 +77,8 @@ const covid19ImpactEstimator = (data) => {
   // Estimated number of severe positive cases that will require ventilators.
   const y1 = 0.02 * output.impact.infectionsByRequestedTime;
   const y2 = 0.02 * output.severeImpact.infectionsByRequestedTime;
-  output.impact.casesForVentilatorsByRequestedTime = floor(y1);
-  output.severeImpact.casesForVentilatorsByRequestedTime = floor(y2);
+  output.impact.casesForVentilatorsByRequestedTime = Math.trunc(y1);
+  output.severeImpact.casesForVentilatorsByRequestedTime = Math.trunc(y2);
 
   // Estimate how much money the economy is likely to lose daily, over the said period of time.
   const z1 = output.impact.infectionsByRequestedTime;
@@ -93,9 +87,9 @@ const covid19ImpactEstimator = (data) => {
   const dailyIncome = data.region.avgDailyIncomeInUSD;
 
 
-  output.impact.dollarsInFlight = floor((z1 * dailyPop * dailyIncome) / numberOfDays);
+  output.impact.dollarsInFlight = Math.trunc((z1 * dailyPop * dailyIncome) / numberOfDays);
 
-  output.severeImpact.dollarsInFlight = floor((z2 * dailyPop * dailyIncome) / numberOfDays);
+  output.severeImpact.dollarsInFlight = Math.trunc((z2 * dailyPop * dailyIncome) / numberOfDays);
 
   // Return output object
   return output;
