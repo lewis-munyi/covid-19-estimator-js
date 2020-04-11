@@ -21,7 +21,7 @@ const covid19ImpactEstimator = (data) => {
   * Challenge 1
   * */
 
-  // Output object
+  // Output
   const output = {
     data, // the input data you got
     impact: {}, // your best case estimation
