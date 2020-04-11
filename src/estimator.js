@@ -1,3 +1,4 @@
+// eslint-disable-next-line consistent-return
 const calculateDays = (period, numberOfDays) => {
   /*
   * A function that receives the period type and integer count
@@ -22,7 +23,7 @@ const covid19ImpactEstimator = (data) => {
 
   // Output object
   const output = {
-    data: {}, // the input data you got
+    data, // the input data you got
     impact: {}, // your best case estimation
     severeImpact: {} // your severe case estimation
   };
