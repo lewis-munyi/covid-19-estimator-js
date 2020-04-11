@@ -61,10 +61,15 @@ const covid19ImpactEstimator = (data) => {
   // 35% of hospital beds are available for COVID-19 patients
   const availableBeds = 0.35 * data.totalHospitalBeds;
 
-  if (availableBeds - value1 < 0) {
+  if (availableBeds - value1 < 0 && availableBeds - value2 < 0) {
     output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1) + 1;
-  } else if (availableBeds - value2 < 0) {
     output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2) + 1;
+  } else if (availableBeds - value1 >= 0 && availableBeds - value2 < 0) {
+    output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1);
+    output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2) + 1;
+  } else if (availableBeds - value1 < 0 && availableBeds - value2 >= 0) {
+    output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1) + 1;
+    output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2);
   } else {
     output.impact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value1);
     output.severeImpact.hospitalBedsByRequestedTime = Math.floor(availableBeds - value2);
