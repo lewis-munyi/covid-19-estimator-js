@@ -51,24 +51,23 @@ const covid19ImpactEstimator = (data) => {
   /*
   * Challenge 2
   * */
-  let value;
 
   // Estimated number of severe positive cases that will require hospitalization to recover.
   let value1 = 0.15 * output.impact.infectionsByRequestedTime;
   let value2 = 0.15 * output.severeImpact.infectionsByRequestedTime;
-  output.impact.severeCasesByRequestedTime = value1;
-  output.severeImpact.severeCasesByRequestedTime = value2;
+  output.impact.severeCasesByRequestedTime = Math.floor(value1);
+  output.severeImpact.severeCasesByRequestedTime = Math.floor(value2);
 
   const severeCasesByRequestedTime = output.impact.infectionsByRequestedTime;
   const impactSevereCasesByRequestedTime = output.severeImpact.infectionsByRequestedTime;
 
   // 35% of hospital beds are available for COVID-19 patients
-  const availableBeds1 = Math.floor(0.35 * severeCasesByRequestedTime);
-  const availableBeds2 = Math.floor(0.35 * impactSevereCasesByRequestedTime);
+  const availableBeds1 = Math.floor(0.35 * data.totalHospitalBeds);
+  const availableBeds2 = Math.floor(0.35 * data.totalHospitalBeds);
 
   // Calculate the total number of available beds for impact & severe impact
-  value1 = availableBeds1 - data.totalHospitalBeds;
-  value2 = availableBeds2 - data.totalHospitalBeds;
+  value1 = availableBeds1 - severeCasesByRequestedTime;
+  value2 = availableBeds2 - impactSevereCasesByRequestedTime;
   output.impact.hospitalBedsByRequestedTime = value1;
   output.severeImpact.hospitalBedsByRequestedTime = value2;
 
@@ -77,14 +76,16 @@ const covid19ImpactEstimator = (data) => {
   * */
 
   // Estimated number of severe positive cases that will require ICU care.
-  value = 0.05 * output.severeImpact.infectionsByRequestedTime;
-  output.impact.casesForICUByRequestedTime = 0.05 * output.impact.infectionsByRequestedTime;
-  output.severeImpact.casesForICUByRequestedTime = value;
+  value2 = 0.05 * output.severeImpact.infectionsByRequestedTime;
+  value1 = 0.05 * output.impact.infectionsByRequestedTime;
+  output.impact.casesForICUByRequestedTime = value1;
+  output.severeImpact.casesForICUByRequestedTime = value2;
 
   // Estimated number of severe positive cases that will require ventilators.
-  output.impact.casesForVentilatorsByRequestedTime = 0.02 * output.impact.infectionsByRequestedTime;
-  value = 0.02 * output.severeImpact.infectionsByRequestedTime;
-  output.severeImpact.casesForVentilatorsByRequestedTime = value;
+  value1 = 0.02 * output.impact.infectionsByRequestedTime;
+  output.impact.casesForVentilatorsByRequestedTime = Math.floor(value1);
+  value2 = 0.02 * output.severeImpact.infectionsByRequestedTime;
+  output.severeImpact.casesForVentilatorsByRequestedTime = Math.floor(value2);
 
   // Estimate how much money the economy is likely to lose daily, over the said period of time.
   const infectionsByTime = output.impact.infectionsByRequestedTime;
