@@ -65,6 +65,21 @@ const covid19ImpactEstimator = (data) => {
   output.impact.hospitalBedsByRequestedTime = availableBeds - severeCasesByRequestedTime;
   output.severeImpact.hospitalBedsByRequestedTime = availableBeds - impactSevereCasesByRequestedTime;
 
+  /*
+  * Challenge 3
+  * */
+
+  // Estimated number of severe positive cases that will require ICU care.
+  output.impact.casesForICUByRequestedTime = 0.05 * output.impact.infectionsByRequestedTime;
+  output.severeImpact.casesForICUByRequestedTime = 0.05 * output.severeImpact.infectionsByRequestedTime;
+
+  // Estimated number of severe positive cases that will require ventilators.
+  output.impact.casesForVentilatorsByRequestedTime = 0.02 * output.impact.infectionsByRequestedTime;
+  output.severeImpact.casesForVentilatorsByRequestedTime = 0.02 * output.severeImpact.infectionsByRequestedTime;
+
+  // Estimate how much money the economy is likely to lose daily, over the said period of time.
+  output.impact.dollarsInFlight = Math.floor((output.impact.infectionsByRequestedTime * data.region.avgDailyIncomePopulation * data.region.avgDailyIncomeInUSD) / 30);
+  output.severeImpact.dollarsInFlight = Math.floor((output.severeImpact.infectionsByRequestedTime * data.region.avgDailyIncomePopulation * data.region.avgDailyIncomeInUSD) / 30);
 
   // Return output object
   return output;
