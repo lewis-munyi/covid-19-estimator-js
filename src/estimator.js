@@ -45,28 +45,32 @@ const covid19ImpactEstimator = (data) => {
   output.impact.infectionsByRequestedTime = output.impact.currentlyInfected * (2 ** factor);
 
   // Estimate the number of severely infected people x days from now
-  // const infectionsByRequestedTime =
-  output.severeImpact.infectionsByRequestedTime = output.severeImpact.currentlyInfected * (2 ** factor);
+  const infectionsByRequestedTime = output.severeImpact.currentlyInfected * (2 ** factor);
+  output.severeImpact.infectionsByRequestedTime = infectionsByRequestedTime;
 
   /*
   * Challenge 2
   * */
+  let value;
 
   // Estimated number of severe positive cases that will require hospitalization to recover.
-  let value = 0.15 * output.severeImpact.infectionsByRequestedTime;
-  output.impact.severeCasesByRequestedTime = 0.15 * output.impact.infectionsByRequestedTime;
-  output.severeImpact.severeCasesByRequestedTime = value;
+  let value1 = 0.15 * output.impact.infectionsByRequestedTime;
+  let value2 = 0.15 * output.severeImpact.infectionsByRequestedTime;
+  output.impact.severeCasesByRequestedTime = value1;
+  output.severeImpact.severeCasesByRequestedTime = value2;
 
   const severeCasesByRequestedTime = output.impact.infectionsByRequestedTime;
   const impactSevereCasesByRequestedTime = output.severeImpact.infectionsByRequestedTime;
 
   // 35% of hospital beds are available for COVID-19 patients
-  const availableBeds = Math.floor(0.35 * data.totalHospitalBeds);
+  const availableBeds1 = Math.floor(0.35 * severeCasesByRequestedTime);
+  const availableBeds2 = Math.floor(0.35 * impactSevereCasesByRequestedTime);
 
   // Calculate the total number of available beds for impact & severe impact
-  value = availableBeds - impactSevereCasesByRequestedTime;
-  output.impact.hospitalBedsByRequestedTime = availableBeds - severeCasesByRequestedTime;
-  output.severeImpact.hospitalBedsByRequestedTime = value;
+  value1 = availableBeds1 - data.totalHospitalBeds;
+  value2 = availableBeds2 - data.totalHospitalBeds;
+  output.impact.hospitalBedsByRequestedTime = value1;
+  output.severeImpact.hospitalBedsByRequestedTime = value2;
 
   /*
   * Challenge 3
